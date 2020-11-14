@@ -53,6 +53,7 @@ proc bindex {args} {
 	return [string first $script [bind $winortag $event]]
     }
     
+    # Remove a script from the binding script, including the trailing newline.
     proc remove {winortag event script} {
 	if {[set first [string first $script [bind $winortag $event]]] < 0} {
 	    return ""
@@ -90,7 +91,6 @@ proc bindex {args} {
 
 	} elseif {$ch1 == "?"} {
 	    # New command, query.
-	    # TODO: search for the binding.
 	    if {[set start [search $winortag $event [string range $script1 1 end]]] < 0} {
 		# Not found, return false
 		return 0
@@ -99,7 +99,6 @@ proc bindex {args} {
 
 	} elseif {$ch1 == "*"} {
 	    # New command, add unique
-	    # TODO: search for the binding and add if not found.
 	    if {[set start [search $winortag $event [string range $script1 1 end]]] < 0} {
 		bind $winortag $event "+[string range $script1 1 end]"
 	    }

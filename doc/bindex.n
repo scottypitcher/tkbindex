@@ -1,0 +1,39 @@
+'\"
+.so man.macros
+.TH bindex n 4.1 "Tk-Extensions"
+.HS bindex tcl
+.BS
+'\" Note:  do not modify the .SH NAME line immediately below!
+.SH NAME
+bindex \- an extended version of the Tk bind command
+.SH SYNOPSIS
+\fBpackage require sample\fR ?\fB0.5\fR?
+.sp
+\fBbindex\fR ?\fB\winortag\fR
+.br
+or
+.br
+\fBbindex\fR ?\fB\winortag\fR? ?\fB\event\fR
+.br
+or
+.br
+.BE
+.SH DESCRIPTION
+.PP
+.PP
+In the \fB\-string\fR version, returns bindex digest alone of \fIstring\fR.
+.PP
+In the \fB\-chan\fR version, returns list of 2 items: length of data in
+\fIchanID\fR followed by bindex digest of all data in \fIchanID\fR.
+\fIChanID\fR is identifier returned from "\fBopen\fR" for example.  If
+\fB\-copychan\fR is supplied, will also copy all data from \fIchanID\fR to
+\fIcopychanID\fR.
+.PP
+In the third form, \fB\-init\fR returns a descriptor, \fB\-update\fR can be
+called any number of times with that descriptor and returns the number of
+bytes read, and \fB\-final\fR returns the result in the same form as the
+standalone \fB\-chan\fR.
+'\" Local Variables:
+'\" mode: nroff
+'\" fill-column: 78
+'\" End:
