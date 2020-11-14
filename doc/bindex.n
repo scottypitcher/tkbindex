@@ -1,38 +1,73 @@
 '\"
 .so man.macros
-.TH bindex n 4.1 "Tk-Extensions"
+.TH bindex n 8.0 Tk "Tk-Extensions"
 .HS bindex tcl
 .BS
 '\" Note:  do not modify the .SH NAME line immediately below!
 .SH NAME
-bindex \- an extended version of the Tk bind command
+bindex \- an extended version of the internal Tk bind command
 .SH SYNOPSIS
-\fBpackage require sample\fR ?\fB0.5\fR?
+package require \fBTk 8.0\fR
 .sp
-\fBbindex\fR ?\fB\winortag\fR
-.br
-or
-.br
-\fBbindex\fR ?\fB\winortag\fR? ?\fB\event\fR
-.br
-or
-.br
-.BE
+package require \fBbindex 1.0\fR
+.sp
+\fBbind\fI tag\fR ?\fIsequence\fR? ?\fB(+|-|*)\fR??\fIscript1\fR? ?\fIscript2\fR?
+..BE
 .SH DESCRIPTION
 .PP
+The \fBbindex\fR command implements some extensions to the internal \fBTk bind\fR command
+for querying, removing, and replacing the bind script.
 .PP
-In the \fB\-string\fR version, returns bindex digest alone of \fIstring\fR.
+This page only describes the bindex extensions. Please refer to the \fBTk bind\fR man page for
+complete details.
 .PP
-In the \fB\-chan\fR version, returns list of 2 items: length of data in
-\fIchanID\fR followed by bindex digest of all data in \fIchanID\fR.
-\fIChanID\fR is identifier returned from "\fBopen\fR" for example.  If
-\fB\-copychan\fR is supplied, will also copy all data from \fIchanID\fR to
-\fIcopychanID\fR.
-.PP
-In the third form, \fB\-init\fR returns a descriptor, \fB\-update\fR can be
-called any number of times with that descriptor and returns the number of
-bytes read, and \fB\-final\fR returns the result in the same form as the
-standalone \fB\-chan\fR.
+The legal forms for the \fBbindex\fR command are:
+.TP
+\fBbindex \fItag\fR
+.
+Return a list whose elements are all the sequences for which there exist bindings for \fItag\fR.
+Refer to \fBbind\fR for complete details.
+.TP
+\fBbindex \fItag\fR \fIsequence\fR
+.
+Return the script currently bound to \fIsequence\fR.
+Refer to \fBbind\fR for complete details.
+.TP
+\fBbindex \fItag\fR \fIsequence\fR \fIscript\fR
+.
+Arrange for \fIscript\fR to be evaluated whenever the event(s) given by \fIsequence\fR occur in the
+window(s) given by \fItag\fR.
+Refer to \fBbind\fR for complete details.
+.TP
+\fBbindex \fItag\fR \fIsequence\fR \fB+\fIscript\fR
+.
+Add \fIscript\fR to the scripts that will be evaluated whenever the event(s) given by \fIsequence\fR occur in the
+window(s) given by \fItag\fR.
+Refer to \fBbind\fR for complete details.
+.TP
+\fBbindex \fItag\fR \fIsequence\fR \fB?\fIscript\fR
+.
+Search the scripts that will be evaluated whenever the event(s) given by \fIsequence\fR occur in the
+window(s) given by \fItag\fR for script \fIscript\fR, and return true if found, otherwise false.
+.TP
+\fBbindex \fItag\fR \fIsequence\fR \fB-\fIscript\fR
+.
+Remove \fIscript\fR from the scripts that will be evaluated whenever the event(s) given by \fIsequence\fR occur in the
+window(s) given by \fItag\fR. Any trailing or leading carriage return will also be removed.
+.TP
+\fBbindex \fItag\fR \fIsequence\fR \fB-\fIscript1\fR \fB-\fIscript2\fR
+.
+Remove \fIscript1\fR from the scripts that will be evaluated whenever the event(s) given by \fIsequence\fR occur in the
+window(s) given by \fItag\fR, and add \fIscript2\fR to those scripts.
+.TP
+\fBbindex \fItag\fR \fIsequence\fR \fB*\fIscript\fR
+.
+If \fIscript\fR does not exist in the scripts that will be evaluated whenever the event(s) given by \fIsequence\fR occur in the
+window(s) given by \fItag\fR, then add it to those scripts.
+.SH "SEE ALSO"
+bind(3tk), bindtags(3tk), event(3tk)
+.SH KEYWORDS
+binding, event
 '\" Local Variables:
 '\" mode: nroff
 '\" fill-column: 78
