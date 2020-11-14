@@ -19,7 +19,7 @@ dnl	to configure the system for the local environment.
 # so that we create the export library with the dll.
 #-----------------------------------------------------------------------
 
-AC_INIT([sample], [0.5])
+AC_INIT(bindex, 1.0)
 
 #--------------------------------------------------------------------
 # Call TEA_INIT as the first TEA_ macro to set up initial vars.
@@ -77,7 +77,7 @@ TEA_ADD_INCLUDES([])
 TEA_ADD_LIBS([])
 TEA_ADD_CFLAGS([])
 TEA_ADD_STUB_SOURCES([])
-TEA_ADD_TCL_SOURCES([])
+TEA_ADD_TCL_SOURCES([scripts/tkbindex.tcl])
 
 #--------------------------------------------------------------------
 # __CHANGE__
@@ -113,7 +113,7 @@ fi
 # This MUST be called after TEA_LOAD_TCLCONFIG / TEA_LOAD_TKCONFIG
 #--------------------------------------------------------------------
 
-TEA_PUBLIC_TCL_HEADERS
+#TEA_PUBLIC_TCL_HEADERS
 #TEA_PRIVATE_TCL_HEADERS
 
 #TEA_PUBLIC_TK_HEADERS
@@ -125,14 +125,14 @@ TEA_PUBLIC_TCL_HEADERS
 # This auto-enables if Tcl was compiled threaded.
 #--------------------------------------------------------------------
 
-TEA_ENABLE_THREADS
+#TEA_ENABLE_THREADS
 
 #--------------------------------------------------------------------
 # The statement below defines a collection of symbols related to
 # building as a shared library instead of a static library.
 #--------------------------------------------------------------------
 
-TEA_ENABLE_SHARED
+#TEA_ENABLE_SHARED
 
 #--------------------------------------------------------------------
 # This macro figures out what flags to use with the compiler/linker
@@ -140,13 +140,13 @@ TEA_ENABLE_SHARED
 # can be taken from the tclConfig.sh file, but this figures it all out.
 #--------------------------------------------------------------------
 
-TEA_CONFIG_CFLAGS
+#TEA_CONFIG_CFLAGS
 
 #--------------------------------------------------------------------
 # Set the default compiler switches based on the --enable-symbols option.
 #--------------------------------------------------------------------
 
-TEA_ENABLE_SYMBOLS
+#TEA_ENABLE_SYMBOLS
 
 #--------------------------------------------------------------------
 # This macro generates a line to use when building a library.  It
@@ -154,7 +154,7 @@ TEA_ENABLE_SYMBOLS
 # and TEA_LOAD_TCLCONFIG macros above.
 #--------------------------------------------------------------------
 
-TEA_MAKE_LIB
+#TEA_MAKE_LIB
 
 #--------------------------------------------------------------------
 # Determine the name of the tclsh and/or wish executables in the
@@ -164,8 +164,8 @@ TEA_MAKE_LIB
 # a pkgIndex.tcl file or anything else at extension build time.
 #--------------------------------------------------------------------
 
-TEA_PROG_TCLSH
-#TEA_PROG_WISH
+#TEA_PROG_TCLSH
+TEA_PROG_WISH
 
 #--------------------------------------------------------------------
 # Setup a *Config.sh.in configuration file.
