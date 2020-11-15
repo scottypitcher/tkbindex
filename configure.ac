@@ -14,7 +14,7 @@ dnl	to configure the system for the local environment.
 #
 # This initializes the environment with PACKAGE_NAME and PACKAGE_VERSION
 # set as provided.  These will also be added as -D defs in your Makefile
-# so you can encode the package version directly into the source files.
+#q so you can encode the package version directly into the source files.
 # This will also define a special symbol for Windows (BUILD_<PACKAGE_NAME>
 # so that we create the export library with the dll.
 #-----------------------------------------------------------------------
@@ -77,7 +77,7 @@ TEA_ADD_INCLUDES([])
 TEA_ADD_LIBS([])
 TEA_ADD_CFLAGS([])
 TEA_ADD_STUB_SOURCES([])
-TEA_ADD_TCL_SOURCES([scripts/tkbindex.tcl])
+TEA_ADD_TCL_SOURCES([scripts/pkgIndex.tcl scripts/tkbindex.tcl])
 
 #--------------------------------------------------------------------
 # __CHANGE__

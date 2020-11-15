@@ -1,4 +1,4 @@
-#!/usr/bin/tclsh
+#!/usr/bin/wish
 #
 # Copyright (C) Scott Pitcher - 2020.
 #
@@ -10,6 +10,7 @@
 
 package require Tk
 
+package provide bindex 1.0
 
 # bindex
 # Usage:

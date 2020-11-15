@@ -10,7 +10,7 @@
 
 package require Tk
 
-source ../scripts/tkbindex.tcl
+package require bindex 1.0
 
 
 set T "."
