@@ -330,7 +330,7 @@ dist: dist-clean
 	$(DIST_INSTALL_DATA) $(srcdir)/Makefile.in \
 	    $(srcdir)/aclocal.m4 $(srcdir)/configure.ac \
 	    $(DIST_DIR)/
-	$(DIST_INSTALL_SCRIPT) $(srcdir)/configure $(DIST_DIR)/
+	$(DIST_INSTALL_SCRIPT) $(srcdir)/configure $(srcdir)/configure-* \$(DIST_DIR)/
 
 	$(INSTALL_DATA_DIR) $(DIST_DIR)/tclconfig
 	$(DIST_INSTALL_DATA) \
