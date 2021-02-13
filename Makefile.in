@@ -242,10 +242,8 @@ install-doc: doc
 	    $(INSTALL_DATA) $$i "$(DESTDIR)$(mandir)/mann" ; \
 	done
 
-test: binaries libraries
-	$(TCLSH) `@CYGPATH@ $(srcdir)/tests/all.tcl` $(TESTFLAGS) \
-	    -load "package ifneeded $(PACKAGE_NAME) $(PACKAGE_VERSION) \
-		[list load `@CYGPATH@ $(PKG_LIB_FILE)` $(PACKAGE_NAME)]"
+test:
+	$(TCLSH) $(srcdir)/tests/tests.tcl
 
 shell: binaries libraries
 	@$(TCLSH) $(SCRIPT)
@@ -335,20 +333,18 @@ dist: dist-clean
 	$(DIST_INSTALL_SCRIPT) $(srcdir)/configure $(DIST_DIR)/
 
 	$(INSTALL_DATA_DIR) $(DIST_DIR)/tclconfig
-	$(DIST_INSTALL_DATA) $(srcdir)/tclconfig/README.txt \
+	$(DIST_INSTALL_DATA) \
 	    $(srcdir)/tclconfig/tcl.m4 $(srcdir)/tclconfig/install-sh \
 	    $(DIST_DIR)/tclconfig/
 
 	# Extension files
 	$(DIST_INSTALL_DATA) \
 	    $(srcdir)/ChangeLog \
-	    $(srcdir)/README.sha \
 	    $(srcdir)/license.terms \
-	    $(srcdir)/README \
-	    $(srcdir)/pkgIndex.tcl.in \
+	    $(srcdir)/README.$(PACKAGE_NAME) \
 	    $(DIST_DIR)/
 
-	list='demos doc generic library mac tests unix win'; \
+	list='demos doc generic library mac tests unix win scripts'; \
 	for p in $$list; do \
 	    if test -d $(srcdir)/$$p ; then \
 		$(INSTALL_DATA_DIR) $(DIST_DIR)/$$p; \
