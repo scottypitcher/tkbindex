@@ -1,6 +1,6 @@
 #!/usr/bin/wish
 #
-# Copyright (C) Scott Pitcher - 2020.
+# Copyright (C) Scott Pitcher - 2020-2021
 #
 # A test implementation of bindex in tcl.
 #
@@ -10,7 +10,7 @@
 
 package require Tk
 
-package provide bindex 1.0
+package provide @PACKAGE_NAME@ @PACKAGE_VERSION@
 
 # bindex
 # Usage:
@@ -117,3 +117,4 @@ proc bindex {args} {
     }
 }
 
+# kate: syntax Tcl/Tk;
