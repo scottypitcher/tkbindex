@@ -91,7 +91,7 @@ TEA_ADD_TCL_SOURCES([scripts/pkgIndex.tcl scripts/tkbindex.tcl])
 # TEA_ADD_* any platform specific compiler/build info here.
 #--------------------------------------------------------------------
 
-#CLEANFILES="$CLEANFILES pkgIndex.tcl"
+# CLEANFILES="$CLEANFILES"
 if test "${TEA_PLATFORM}" = "windows" ; then
     # Ensure no empty if clauses
     :
@@ -180,7 +180,8 @@ TEA_EXPORT_CONFIG([bindex])
 # substituting the AC variables in. Include these here.
 #--------------------------------------------------------------------
 
-AC_CONFIG_FILES([Makefile scripts/pkgIndex.tcl])
+AC_CONFIG_FILES([Makefile scripts/pkgIndex.tcl scripts/tkbindex.tcl])
+
 #AC_CONFIG_FILES([sampleConfig.sh])
 
 #--------------------------------------------------------------------

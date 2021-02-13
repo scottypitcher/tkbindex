@@ -2,9 +2,33 @@
 #
 # Copyright (C) Scott Pitcher - 2020-2021
 #
+# This software is copyrighted (C) by Scott V. Pitcher of Melbourne, Australia
+# and Low Power Linux Servers, 2021. The following terms apply to all files
+# associated with the software unless explicitly disclaimed in individual
+# files.
+# 
+# This program is free software: you can redistribute it and/or modify it
+# under the terms of the GNU Lesser General Public License version 3 as
+# published by the Free Software Foundation.
+# 
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+# for more details.
+# 
+# You can find a copy of the GNU Lesser General Public License at:
+# <https://www.gnu.org/licenses/>.
+# 
+# 
+# See the file "license.terms" that came with the software distribution for
+# details.
+# 
 # A test implementation of bindex in tcl.
 #
-# bindex: a Tk bind extension that permits additional prefixes for querying, removing, replacing bindings.
+# -----------------------------------------------------------------------------
+# 
+# bindex: a Tk bind extension that permits additional prefixes for querying,
+# removing, replacing bindings.
 #
 
 

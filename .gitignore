@@ -4,3 +4,4 @@
 /configure
 /autom4te.cache/
 /Makefile
+/scripts/tkbindex.tcl
