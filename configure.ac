@@ -164,7 +164,6 @@ fi
 # a pkgIndex.tcl file or anything else at extension build time.
 #--------------------------------------------------------------------
 
-#TEA_PROG_TCLSH
 TEA_PROG_WISH
 
 #--------------------------------------------------------------------
@@ -181,8 +180,6 @@ TEA_EXPORT_CONFIG([bindex])
 #--------------------------------------------------------------------
 
 AC_CONFIG_FILES([Makefile scripts/pkgIndex.tcl scripts/tkbindex.tcl])
-
-#AC_CONFIG_FILES([sampleConfig.sh])
 
 #--------------------------------------------------------------------
 # Finally, substitute all of the various values into the files
