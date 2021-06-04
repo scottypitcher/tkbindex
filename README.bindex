@@ -29,15 +29,16 @@ bindex tag sequence ?script
 
 bindex tag sequence -script
 	Remove script from the scripts that will be evaluated whenever the event(s) given by sequence occur in the 
-	window(s)  given  by tag. Any trailing or leading carriage return will also be removed.
+	window(s) given by tag and return true, else return false. Any trailing or leading carriage return will
+	also be removed.  
 
-bindex tag sequence -script1 -script2
+bindex tag sequence -script1 script2
 	Remove  script1  from the scripts that will be evaluated whenever the event(s) given by sequence occur in
-	the window(s) given by tag, and add script2 to those scripts.
+	the window(s) given by tag, and add script2 to those scripts and return true, else return false.
 
 bindex tag sequence *script
 	If script does not exist in the scripts that will be evaluated whenever the event(s) given by sequence occur
-	in  the  window(s) given by tag, then add it to those scripts.
+	in  the  window(s) given by tag, then add it to those scripts and return true, else return false.
 
 
 To make type:
@@ -52,4 +53,3 @@ the make of tcl for most of its configuration parameters.
 
 
 Written by:  Scott Pitcher (scottypitcher@gmail.com)
-TODO: Licence

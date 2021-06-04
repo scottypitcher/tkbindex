@@ -1,0 +1,5 @@
+#! /bin/sh
+#
+# Do testing configuration for local installation.
+
+./configure --prefix=$HOME/tcltk --exec-prefix=$HOME/tcltk

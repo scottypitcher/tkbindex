@@ -2,21 +2,31 @@
 #
 # Copyright (C) Scott Pitcher - 2020-2021
 #
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU Lesser General Public License version 3
-#    as published by the Free Software Foundation.
-#
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU Lesser General Public License for more details.
-#
-#    You can find a copy of the GNU Lesser General Public License at:
-#    <https://www.gnu.org/licenses/>.
-#
-# A test implementation of bindex in tcl.
-#
-# bindex: a Tk bind extension that permits additional prefixes for querying, removing, replacing bindings.
+# This software is copyrighted (C) by Scott V. Pitcher of Melbourne, Australia
+# and Low Power Linux Servers, 2021. The following terms apply to all files
+# associated with the software unless explicitly disclaimed in individual
+# files.
+# 
+# This program is free software: you can redistribute it and/or modify it
+# under the terms of the GNU Lesser General Public License version 3 as
+# published by the Free Software Foundation.
+# 
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+# for more details.
+# 
+# You can find a copy of the GNU Lesser General Public License at:
+# <https://www.gnu.org/licenses/>.
+# 
+# 
+# See the file "license.terms" that came with the software distribution for
+# details.
+# 
+# -----------------------------------------------------------------------------
+# 
+# bindex: a Tk bind extension that permits additional prefixes for querying,
+# removing, replacing bindings.
 #
 
 
@@ -63,18 +73,43 @@ proc bindex {args} {
     }
     
     # Search the bindings for event in winortag for script and return it's start index.
+    # Note we have to insert before and after our script, and also search 
+    # Returns:
+    #	""		Not found
+    #	n1 n2		The start and end index.
     proc search {winortag event script} {
-	return [string first $script [bind $winortag $event]]
+	set bindings [bind $winortag $event]
+	set blen [string length $bindings]
+	set slen [string length $script]
+	set result ""
+
+	# TODO: escape the '*' in string match ...
+# 	puts "search: script=<$script> bindings=<$bindings>"
+	if {[string compare "$script" "$bindings"] == 0} {
+	    # The whole binding matches
+# 	    puts "search: whole binding matches"
+	    set result [list 0 [expr $slen - 1]]
+
+	} elseif {[string compare "$script\n" [string range $bindings 0 $slen]] == 0} {
+	    # Found match at the start with a trailing \n.
+# 	    puts "search: start matches with \\n"
+	    set result [list 0 $slen]
+
+	} elseif {[string compare "\n$script" [string range $bindings end-$slen end]] == 0} {
+	    # Found match at the end with a leading \n.
+# 	    puts "search: end matches with \\n "
+	    set result [list [expr $blen - $slen - 1] [expr $blen - 1]]
+
+	} elseif {[set n1 [string first "\n$script\n" $bindings]] > -1} {
+	    # Found a match in the middle with leading and trailing \n,
+	    # and one of these has to be removed.
+# 	    puts "search: middle matches with \\n \\n"
+	    set result [list $n1 [expr $n1 + $slen]]
+	}
+	
+	return $result
     }
     
-    # Remove a script from the binding script, including the trailing newline.
-    proc remove {winortag event script} {
-	if {[set first [string first $script [bind $winortag $event]]] < 0} {
-	    return ""
-	}
-	return [string trim [string replace [bind $winortag $event] $first [expr $first+[string length $script]]]]
-    }
-
     lassign $args winortag event script1 script2
     
     if {$llen == 1} {
@@ -89,13 +124,13 @@ proc bindex {args} {
     
 	if {[set ch1 [string index $script1 0]] == "-"} {
 	    # New command, remove or remove and replace.
-	    if {[set removed [remove $winortag $event [string range $script1 1 end]]] == ""} {
+
+	    if {[set indices [search $winortag $event [string range $script1 1 end]]] == ""} {
 		# Not found, return false
 		return 0
 	    }
-
-	    # Remove the deleted script from the real binding.
-	    bind $winortag $event $removed
+	    lassign $indices n1 n2
+	    bind $winortag $event [string replace [bind $winortag $event] $n1 $n2]
 
 	    # Add the replacement binding if one is given.
 	    if {$llen == 4} {
@@ -105,7 +140,7 @@ proc bindex {args} {
 
 	} elseif {$ch1 == "?"} {
 	    # New command, query.
-	    if {[set start [search $winortag $event [string range $script1 1 end]]] < 0} {
+	    if {[set indices [search $winortag $event [string range $script1 1 end]]] == ""} {
 		# Not found, return false
 		return 0
 	    }
@@ -113,9 +148,11 @@ proc bindex {args} {
 
 	} elseif {$ch1 == "*"} {
 	    # New command, add unique
-	    if {[set start [search $winortag $event [string range $script1 1 end]]] < 0} {
+	    if {[set indices [search $winortag $event [string range $script1 1 end]]] == ""} {
 		bind $winortag $event "+[string range $script1 1 end]"
+		return 1
 	    }
+	    return 0
 
 	} else {
 	    # Default behaviour is to pass it through to bind.

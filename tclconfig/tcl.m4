@@ -2858,8 +2858,10 @@ AC_DEFUN([TEA_ADD_TCL_SOURCES], [
     vars="$@"
     for i in $vars; do
 	# check for existence, be strict because it is installed
-	if test ! -f "${srcdir}/$i" ; then
-	    AC_MSG_ERROR([could not find tcl source file '${srcdir}/$i'])
+	# SVP 13FEB2021: Add check for *.in so we can do configure substitution within
+	# these files.
+	if test ! -f "${srcdir}/$i" -a ! -f "${srcdir}/$i.in" ; then
+	    AC_MSG_ERROR([could not find tcl source file '${srcdir}/$i' or '${srcdir}/$i.in'])
 	fi
 	PKG_TCL_SOURCES="$PKG_TCL_SOURCES $i"
     done

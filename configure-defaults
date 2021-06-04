@@ -1,0 +1,5 @@
+#! /bin/sh
+#
+# Do default configuration
+
+./configure --prefix=/usr/local --libdir=/usr/local/share/tcltk --exec-prefix=/usr/local
