@@ -2,4 +2,4 @@
 #
 # Do testing configuration for local installation.
 
-./configure --prefix=$HOME/tcltk --exec-prefix=$HOME/tcltk
+./configure --prefix=$HOME/tcltk --exec-prefix=$HOME/tcltk --with-tkinclude=/usr/include/tk

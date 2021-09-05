@@ -71,7 +71,7 @@ TEA_SETUP_COMPILER
 # and PKG_TCL_SOURCES.
 #-----------------------------------------------------------------------
 
-TEA_ADD_SOURCES([])
+TEA_ADD_SOURCES([src/tkbindex.c])
 TEA_ADD_HEADERS([])
 TEA_ADD_INCLUDES([])
 TEA_ADD_LIBS([])
@@ -117,7 +117,7 @@ fi
 #TEA_PRIVATE_TCL_HEADERS
 
 #TEA_PUBLIC_TK_HEADERS
-#TEA_PRIVATE_TK_HEADERS
+TEA_PRIVATE_TK_HEADERS
 #TEA_PATH_X
 
 #--------------------------------------------------------------------
@@ -132,7 +132,7 @@ fi
 # building as a shared library instead of a static library.
 #--------------------------------------------------------------------
 
-#TEA_ENABLE_SHARED
+TEA_ENABLE_SHARED
 
 #--------------------------------------------------------------------
 # This macro figures out what flags to use with the compiler/linker
@@ -154,7 +154,7 @@ fi
 # and TEA_LOAD_TCLCONFIG macros above.
 #--------------------------------------------------------------------
 
-#TEA_MAKE_LIB
+TEA_MAKE_LIB
 
 #--------------------------------------------------------------------
 # Determine the name of the tclsh and/or wish executables in the
