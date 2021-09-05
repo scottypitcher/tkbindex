@@ -15,7 +15,7 @@
 #include "tkUnixInt.h"
 #endif
 
-#define PACKAGE_VERSION 1.1
+#define PACKAGE_VERSION "1.1"
 
 /*
  *----------------------------------------------------------------------

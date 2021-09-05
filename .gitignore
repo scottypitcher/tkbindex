@@ -1,8 +1,3 @@
-/config.log
-/config.status
-/configure
-/autom4te.cache/
-/Makefile
 /scripts/tkbindex.tcl
 /scripts/pkgIndex.tcl
-/packages
+/build

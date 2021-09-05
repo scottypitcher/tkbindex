@@ -28,12 +28,22 @@
 # Test functions for the bindex extension.
 #
 
+set version "1.1"
+
 # For local path setup (for testing I install it under ~/tcltk).
 catch "source ~/.wishrc"
 
 package require Tk
-package require bindex 1.0
-# source "scripts/tkbindex.tcl.in"
+
+if {[catch "package require bindex $version" err_msg]} {
+    set dir [file join [file dirname [info script]] .. build lib]
+    if {![file exists $dir] || ![file isdirectory $dir]} {
+	error "Cannot find the bindex library. Not on the system and not in $dir"
+    }
+    lappend auto_path $dir
+    package require bindex $version
+}
+
 package require tcltest
 
 
