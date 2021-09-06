@@ -55,7 +55,7 @@ window(s) given by \fItag\fR for script \fIscript\fR, and return true if found, 
 Remove \fIscript\fR from the scripts that will be evaluated whenever the event(s) given by \fIsequence\fR occur in the
 window(s) given by \fItag\fR and return true, else return false. Any trailing or leading carriage return will also be removed.
 .TP
-\fBbindex \fItag\fR \fIsequence\fR \fB-\fIscript1\fR \fB-\fIscript2\fR
+\fBbindex \fItag\fR \fIsequence\fR \fB-\fIscript1\fR \fIscript2\fR
 .
 Remove \fIscript1\fR from the scripts that will be evaluated whenever the event(s) given by \fIsequence\fR occur in the
 window(s) given by \fItag\fR, and add \fIscript2\fR to those scripts and return true, else return false.

@@ -46,8 +46,8 @@ Tk_BindexObjCmd(
     ClientData object;
     const char *string;
 
-    if ((objc < 2) || (objc > 4)) {
-	Tcl_WrongNumArgs(interp, 1, objv, "window ?pattern? ?command?");
+    if ((objc < 2) || (objc > 5)) {
+	Tcl_WrongNumArgs(interp, 1, objv, "window ?pattern? ?command? ?command?");
 	return TCL_ERROR;
     }
     string = Tcl_GetString(objv[1]);
@@ -70,41 +70,15 @@ Tk_BindexObjCmd(
     }
 
     /*
-     * If there are four arguments, the command is modifying a binding. If
-     * there are three arguments, the command is querying a binding. If there
-     * are only two arguments, the command is querying all the bindings for
+     * If there are only two arguments, the command is querying all the bindings for
      * the given tag/window.
+     * If there are three arguments, the command is querying a binding.
+     * If there are four or five arguments, the command is modifying a binding.
      */
 
-    if (objc == 4) {
-	int append = 0;
-	unsigned long mask;
-	const char *sequence = Tcl_GetString(objv[2]);
-	const char *script = Tcl_GetString(objv[3]);
+    if (objc == 2) {
+	Tk_GetAllBindings(interp, winPtr->mainPtr->bindingTable, object);
 
-	/*
-	 * If the script is null, just delete the binding.
-	 */
-
-	if (script[0] == 0) {
-	    return Tk_DeleteBinding(interp, winPtr->mainPtr->bindingTable,
-		    object, sequence);
-	}
-
-	/*
-	 * If the script begins with "+", append this script to the existing
-	 * binding.
-	 */
-
-	if (script[0] == '+') {
-	    script++;
-	    append = 1;
-	}
-	mask = Tk_CreateBinding(interp, winPtr->mainPtr->bindingTable,
-		object, sequence, script, append);
-	if (mask == 0) {
-	    return TCL_ERROR;
-	}
     } else if (objc == 3) {
 	const char *command;
 
@@ -115,8 +89,109 @@ Tk_BindexObjCmd(
 	    return TCL_OK;
 	}
 	Tcl_SetObjResult(interp, Tcl_NewStringObj(command, -1));
+
     } else {
-	Tk_GetAllBindings(interp, winPtr->mainPtr->bindingTable, object);
+	const char *append = 0, *replace = 0;
+	unsigned long mask = 0;
+	const char *sequence = Tcl_GetString(objv[2]);
+	const char *script = Tcl_GetString(objv[3]);
+	const char *script2 = NULL;
+	const char *cmd = NULL;
+	char *newcmd = NULL;
+	int n1 = -1, n2 = -1, len1 = 0, len2 = 0;
+
+	if (objc == 5) {
+	    if (script[0] != '-') {
+		Tcl_WrongNumArgs(interp, 1, objv, "window ?pattern? -?remove_command? ?append_command?");
+		return TCL_ERROR;
+	    }
+	    script2 = Tcl_GetString(objv[4]);
+	}
+
+	/*
+	 * Certain operators ('?', '*', and '-') require us to search the bind command for the
+	 * matching script. We set the n1 and n2 indexes if we find it.
+	 */
+
+	if (script[0] == '?' || script[0] == '*' || script[0] == '-') {
+	    const char *match;
+
+	    cmd = Tk_GetBinding(interp, winPtr->mainPtr->bindingTable, object, sequence);
+	    len1 = strlen(cmd);
+	    len2 = strlen(script) - 1;
+
+	    /*
+	     * Does the script match the command, either fully, or with a carriage return
+	     * at either or both ends?
+	     */
+
+	    if ((match = strstr(cmd, script + 1)) != NULL &&
+		    (match == cmd || cmd[match - cmd - 1] == '\n') &&
+			    (match == cmd + len1 - len2 || match[len2] == '\n')) {
+		n1 = match - cmd;
+		n2 = n1 + len2 - 1;
+	    }
+	}
+
+	/*
+	 * Now process the bind command.
+	 */
+
+	if (script[0] == '+') {
+	    append = script+1;
+
+	} else if (script[0] == '?') {
+	    Tcl_SetObjResult(interp, Tcl_NewBooleanObj(n1 > -1 && n2 > -1));
+
+	} else if (script[0] == '-') {
+	    if (n1 > -1 && n2 > -1) {
+
+		/*
+		 * We cut the script out of the bind command.
+		 */
+
+		newcmd = Tcl_Alloc(len2 - len1 + 1);
+		strcpy(newcmd,cmd);
+		strcpy(newcmd+n1+(n1 > 0 ? -1 : 0),cmd+n2+(n1 == 0 ? 1 : 0));
+		if (newcmd[0] == '\0') {
+		    Tk_DeleteBinding(interp, winPtr->mainPtr->bindingTable, object, sequence);
+		} else {
+		    Tk_CreateBinding(interp, winPtr->mainPtr->bindingTable, object, sequence, newcmd, 0);
+		}
+		Tcl_Free(newcmd);
+	    }
+		
+	    Tcl_SetObjResult(interp, Tcl_NewBooleanObj(n1 > -1 && n2 > -1));
+	    append = script2;
+
+	} else if (script[0] == '*') {
+	    if (n1 > -1 && n2 > -1) {
+		Tcl_SetObjResult(interp, Tcl_NewBooleanObj(0));
+	    } else {
+		Tcl_SetObjResult(interp, Tcl_NewBooleanObj(0));
+		append = script+1;
+	    }
+
+	} else if (script[0] == 0) {
+	    return Tk_DeleteBinding(interp, winPtr->mainPtr->bindingTable,
+		    object, sequence);
+	    
+	} else {
+	    replace = script;
+	}
+
+		
+	if (append) {
+	    if ((mask = Tk_CreateBinding(interp, winPtr->mainPtr->bindingTable,
+		    object, sequence, append, 1)) == 0)
+		return TCL_ERROR;
+
+	} else if (replace) {
+	    if ((mask = Tk_CreateBinding(interp, winPtr->mainPtr->bindingTable,
+		    object, sequence, script, 0)) == 0)
+		return TCL_ERROR;
+	}
+
     }
     return TCL_OK;
 }
