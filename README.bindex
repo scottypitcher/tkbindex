@@ -43,13 +43,11 @@ bindex tag sequence *script
 
 To make type:
 
-      ./configure
-      make
-      make install
+    make config
+    make all
 
-The configure script will deduce $PREFIX from the tcl installation.
-The generated Makefile uses the file $PREFIX/lib/tclConfig.sh that was left by
-the make of tcl for most of its configuration parameters.
+* Note I changed the build system from autoconf to a set of make scripts. It doesn't install yet and it probably won't detect
+your TCL installation. But the tkbindex package will be left in build/lib after the "make all" step.
 
 
 Written by:  Scott Pitcher (scottypitcher@gmail.com)

@@ -3,6 +3,9 @@
  *
  * Extended bind command, taken from tk/generic/tkCmds.c
  *
+ * Scott Pitcher 6SEP2021
+ * This is a c implementation of the tkbindex extension.
+ * Note: Not finished and will not pass the tests.
  */
 
 #include "tkInt.h"
