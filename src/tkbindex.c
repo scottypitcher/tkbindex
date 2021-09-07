@@ -122,7 +122,7 @@ Tk_BindexObjCmd(
 
 	    cmd = Tk_GetBinding(interp, winPtr->mainPtr->bindingTable, object, sequence);
 	    len1 = strlen(cmd);
-	    len2 = strlen(script);
+	    len2 = strlen(script+1);
 
 	    /*
 	     * Does the script match the command, either fully, or with a carriage return
@@ -130,17 +130,38 @@ Tk_BindexObjCmd(
 	     * TODO: Is this logic correct? What if we have a partial match on another command portion?
 	     */
 	    match = cmd;
+#define DEBUG_SEARCH 0
+#if DEBUG_SEARCH
+	    Tcl_AppendResult(interp, "Cmd: <", cmd, ">", "Script: <", script + 1, ">", NULL);
+	    int i = 0;
+#endif
 	    while ((match = strstr(match, script + 1)) != NULL) {
+#if DEBUG_SEARCH
+		/* DEBUG: report the matching result */
+		Tcl_AppendResult(interp, "Match(", Tcl_GetString(Tcl_NewIntObj(i)), "): <", match, ">", NULL);
+#endif
 		/*
 		 * If the match is enclosed by start/end of string or newlines, then we have
 		 * a valid match.
 		 */
-		if ((match == cmd || cmd[match-cmd] == '\n') && (match == cmd + len1 - len2 || match[len2] == '\n')) {
+#if DEBUG_SEARCH
+		Tcl_AppendElement(interp, match == cmd ? "(match == cmd)" : "(---)" );
+		Tcl_AppendElement(interp, match != cmd && cmd[match-cmd-1] == '\n' ? "(cmd[match-cmd-1] == '\\n')" : "(---)" );
+		Tcl_AppendElement(interp, match == cmd + len1 - len2 ? "(match == cmd + len1 - len2)" : "(---)" );
+		Tcl_AppendElement(interp, match != cmd + len1 - len2 && match[len2] == '\n' ? "(match[len2] == '\\n')" : "(---)" );
+#endif
+		if ((match == cmd || cmd[match-cmd-1] == '\n') && (match == cmd + len1 - len2 || match[len2] == '\n')) {
 		    n1 = match - cmd;
 		    n2 = n1 + len2 - 1;
+#if DEBUG_SEARCH
+		    Tcl_AppendElement(interp, "Matched!");
+#endif
 		    break;
 		}
 		++match;
+#if DEBUG_SEARCH
+		++i;
+#endif
 	    }
 	}
 
@@ -158,7 +179,8 @@ Tk_BindexObjCmd(
 	    /*
 	     * Query if a command is in the binding commands.
 	     */
-	    Tcl_SetObjResult(interp, Tcl_NewBooleanObj(n1 > -1 && n2 > -1));
+	    Tcl_AppendElement(interp, (n1 > -1 && n2 > -1) ? "1" : "0");
+// 	    Tcl_SetObjResult(interp, Tcl_NewBooleanObj(n1 > -1 && n2 > -1));
 
 	} else if (script[0] == '-') {
 	    /*
@@ -193,17 +215,20 @@ Tk_BindexObjCmd(
 		/* We only add the replacement command, if we found and removed the first one. */
 		append = script2;
 	    }
-		
-	    Tcl_SetObjResult(interp, Tcl_NewBooleanObj(n1 > -1 && n2 > -1));
+
+// 	    Tcl_SetObjResult(interp, Tcl_NewBooleanObj(n1 > -1 && n2 > -1));
+	    Tcl_AppendElement(interp, (n1 > -1 && n2 > -1) ? "1" : "0");
 
 	} else if (script[0] == '*') {
 	    /*
 	     * If the command was found then we return false, otherwise append it and return true.
 	     */
 	    if (n1 > -1 && n2 > -1) {
-		Tcl_SetObjResult(interp, Tcl_NewBooleanObj(0));
+		Tcl_AppendElement(interp, "0");
+// 		Tcl_SetObjResult(interp, Tcl_NewBooleanObj(0));
 	    } else {
-		Tcl_SetObjResult(interp, Tcl_NewBooleanObj(1));
+		Tcl_AppendElement(interp, "1");
+// 		Tcl_SetObjResult(interp, Tcl_NewBooleanObj(1));
 		append = script+1;
 	    }
 

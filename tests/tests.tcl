@@ -130,10 +130,19 @@ puts "(bindex) Enter %W (4)"} }
     # bindex tag sequence ?script
     # 	Search the scripts that will be evaluated whenever the event(s) given by sequence occur in the window(s)
     # 	given by tag for script script, and return true if found, otherwise false.
-    # 
+    #
+    # ---command-name description body result output {options:setup cleanup match-type returncode erroroutput}
+    lappend testlist {"F. bindex" "bindex searches for the only <Enter> binding" {
+	return [bindex $W <Enter> "?puts \"(bindex) Enter %W (1)\""]
+	} 1 {} {
+	    bindex $W <Enter> "puts \"(bindex) Enter %W (1)\""} }
     lappend testlist {"F. bindex" "bindex searches for the first <Enter> binding" {
 	return [bindex $W <Enter> "?puts \"(bindex) Enter %W (1)\""]
-	} 1 {} }
+	} 1 {} {
+	    bindex $W <Enter> "puts \"(bindex) Enter %W (1)\""
+	    bindex $W <Enter> "+puts \"(bindex) Enter %W (2)\""
+	    bindex $W <Enter> "+puts \"(bindex) Enter %W (3)\""
+	    bindex $W <Enter> "+puts \"(bindex) Enter %W (4)\""} }
     lappend testlist {"F. bindex" "bindex searches for the last <Enter> binding" {
 	return [bindex $W <Enter> "?puts \"(bindex) Enter %W (4)\""]
 	} 1 {} }
@@ -157,7 +166,12 @@ puts "(bindex) Enter %W (4)"} }
 	return $result
 	} 1 {puts "(bindex) Enter %W (1)"
 puts "(bindex) Enter %W (3)"
-puts "(bindex) Enter %W (4)"} }
+puts "(bindex) Enter %W (4)"} {
+	    bindex $W <Enter> {}
+	    bindex $W <Enter> "puts \"(bindex) Enter %W (1)\""
+	    bindex $W <Enter> "puts \"(bindex) Enter %W (2)\""
+	    bindex $W <Enter> "puts \"(bindex) Enter %W (3)\""
+	    bindex $W <Enter> "puts \"(bindex) Enter %W (4)\""} }
     lappend testlist {"G. bindex" "bindex removes the last <Enter> binding" {
 	set result [bindex $W <Enter> "-puts \"(bindex) Enter %W (4)\""]
 	puts -nonewline [bind $W <Enter>]
@@ -195,7 +209,8 @@ puts "(bindex) Enter %W (3)"} }
 	set result [bindex $W <Enter> "-puts \"(bindex) Enter %W (2)\"" "puts \"(bindex) Enter %W (1)\""]
 	puts -nonewline [bind $W <Enter>]
 	return $result
-	} 1 {puts "(bindex) Enter %W (1)"} }
+	} 1 {puts "(bindex) Enter %W (1)"} {
+	    bindex $W <Enter> {} } }
     lappend testlist {"H. bindex" "bindex tries to replace a nonexistant <Enter> binding, returns false" {
 	set result [bindex $W <Enter> "-puts \"(bindex) Enter %W (2)\"" "puts \"(bindex) Enter %W (1)\""]
 	puts -nonewline [bind $W <Enter>]
@@ -254,8 +269,8 @@ puts "(bindex) Enter %W (2)"} {} {}}
 	if {$match == ""} { set match exact }
 	if {$errout == ""} { set errout "" }
 	if {$rcode == ""} { set rcode "ok return" }
-	if {$setup != ""} { set setup [set $setup] }
-	if {$cleanup != ""} { set cleanup [set $cleanup] }
+# 	if {$setup != ""} { set setup [set $setup] }
+# 	if {$cleanup != ""} { set cleanup [set $cleanup] }
 
 	# Testing only the selected tests
 	if {[string first [string index $prefix 0] $selector] < 0} { continue }
