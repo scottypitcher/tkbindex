@@ -73,7 +73,7 @@ package require tcltest
 
 
 # bindex test code.
-proc moduleTests {} {
+proc moduleTests {{selector "ABCDEFGHI"}} {
 
     # Test each bindex subcommand.
     # ---command-name description body result output {options:setup cleanup match-type returncode erroroutput}
@@ -84,7 +84,7 @@ proc moduleTests {} {
     # 
     lappend testlist {"A. bindex" "compare bind <tag> and bindex <tag> output - should match" {
 	return [string compare [bind $W] [bindex $W]]
-	} 0 {} setup-T-F-W}
+	} 0 {} {}}
 
     # bindex tag sequence
     # 	Return the script currently bound to sequence.  Refer to bind for complete details.
@@ -185,7 +185,6 @@ puts "(bindex) Enter %W (3)"} }
 	return $result
 	} 1 {} }
     
-    
     # bindex tag sequence -script1 script2
     # 	Remove  script1  from the scripts that will be evaluated whenever the event(s) given by sequence occur in
     # 	the window(s) given by tag, and add script2 to those scripts.
@@ -218,21 +217,16 @@ puts "(bindex) Enter %W (2)"} }
 	puts -nonewline [bind $W <Enter>]
 	return $result
 	} 0 {puts "(bindex) Enter %W (1)"
-puts "(bindex) Enter %W (2)"} {} cleanup-T-F-W}
-
-    # Common setup and cleanup.
-    set setup-T-F-W {
-	    set T "."
-	    pack [frame [set F .f] -background blue] -expand 1 -fill both
-	    pack [label [set W $F.l] -text "A label" -background red] -expand 1 -fill both
-	    wm geometry . "100x100"
-    }
-    set cleanup-T-F-W {
-	destroy $T
-    }
+puts "(bindex) Enter %W (2)"} {} {}}
 
     # Setup the test output.
     ::tcltest::configure -verbose [list pass skip error]
+    
+    # Common setup.
+    set T "."
+    pack [frame [set F .f] -background blue] -expand 1 -fill both
+    pack [label [set W $F.l] -text "A label" -background red] -expand 1 -fill both
+    wm geometry . "100x100"
 
     # Run the list of tests.
     foreach test_params $testlist {
@@ -247,6 +241,10 @@ puts "(bindex) Enter %W (2)"} {} cleanup-T-F-W}
 	if {$rcode == ""} { set rcode "ok return" }
 	if {$setup != ""} { set setup [set $setup] }
 	if {$cleanup != ""} { set cleanup [set $cleanup] }
+
+	# Testing only the selected tests
+	if {[string first [string index $prefix 0] $selector] < 0} { continue }
+
 	tcltest::test $prefix-$testn $desc \
 	    -setup $setup \
 	    -body $body \
@@ -254,6 +252,9 @@ puts "(bindex) Enter %W (2)"} {} cleanup-T-F-W}
 	    -match $match -result $res -output $out -errorOutput $errout -returnCodes $rcode
 	set oldprefix $prefix
     }
+
+    # Common cleanup.
+    destroy $T
 }
 
-moduleTests
+moduleTests $argv

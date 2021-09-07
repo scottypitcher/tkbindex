@@ -96,6 +96,7 @@ Tk_BindexObjCmd(
     } else {
 	const char *append = 0, *replace = 0;
 	unsigned long mask = 0;
+	int result;
 	const char *sequence = Tcl_GetString(objv[2]);
 	const char *script = Tcl_GetString(objv[3]);
 	const char *script2 = NULL;
@@ -126,6 +127,7 @@ Tk_BindexObjCmd(
 	    /*
 	     * Does the script match the command, either fully, or with a carriage return
 	     * at either or both ends?
+	     * TODO: Is this logic correct? What if we have a partial match on another command portion?
 	     */
 
 	    if ((match = strstr(cmd, script + 1)) != NULL &&
@@ -141,45 +143,75 @@ Tk_BindexObjCmd(
 	 */
 
 	if (script[0] == '+') {
+	    /*
+	     * Append a command to the binding commands.
+	     */
 	    append = script+1;
 
 	} else if (script[0] == '?') {
+	    /*
+	     * Query if a command is in the binding commands.
+	     */
 	    Tcl_SetObjResult(interp, Tcl_NewBooleanObj(n1 > -1 && n2 > -1));
 
 	} else if (script[0] == '-') {
+	    /*
+	     * Remove a command, and possibly add another one.
+	     */
 	    if (n1 > -1 && n2 > -1) {
 
 		/*
 		 * We cut the script out of the bind command.
 		 */
 
-		newcmd = Tcl_Alloc(len2 - len1 + 1);
-		strcpy(newcmd,cmd);
-		strcpy(newcmd+n1+(n1 > 0 ? -1 : 0),cmd+n2+(n1 == 0 ? 1 : 0));
+		newcmd = Tcl_Alloc(len1+1);
+		/* Copy the first portion of cmd up to the character before the '\n' + script, then NUL terminate. */
+		newcmd[0] = '\0';
+		if (n1 > 0) {
+		    strncpy(newcmd,cmd,n1-1);
+		    /* Remove trailing '\n' */
+		    newcmd[n1-1] = '\0';
+		}
+		/* Append the trailing portion, and if there was a first portion, include the leading '\n' */
+		if (n2 < len1 - 1)
+		    strcat(newcmd,cmd+n2+1+(n1 > 0 ? 0 : 1));
 		if (newcmd[0] == '\0') {
-		    Tk_DeleteBinding(interp, winPtr->mainPtr->bindingTable, object, sequence);
+		    if ((result = Tk_DeleteBinding(interp, winPtr->mainPtr->bindingTable, object, sequence)) != TCL_OK)
+			return result;
 		} else {
-		    Tk_CreateBinding(interp, winPtr->mainPtr->bindingTable, object, sequence, newcmd, 0);
+		    if ((mask = Tk_CreateBinding(interp, winPtr->mainPtr->bindingTable, object, sequence, newcmd, 0)) == 0)
+			return TCL_ERROR;
 		}
 		Tcl_Free(newcmd);
+		
+		/* We only add the replacement command, if we found and removed the first one. */
+		append = script2;
 	    }
 		
 	    Tcl_SetObjResult(interp, Tcl_NewBooleanObj(n1 > -1 && n2 > -1));
-	    append = script2;
 
 	} else if (script[0] == '*') {
+	    /*
+	     * If the command was found then we return false, otherwise append it and return true.
+	     */
 	    if (n1 > -1 && n2 > -1) {
 		Tcl_SetObjResult(interp, Tcl_NewBooleanObj(0));
 	    } else {
-		Tcl_SetObjResult(interp, Tcl_NewBooleanObj(0));
+		Tcl_SetObjResult(interp, Tcl_NewBooleanObj(1));
 		append = script+1;
 	    }
 
 	} else if (script[0] == 0) {
+	    /*
+	     * If the script is empty, then remove it.
+	     */
 	    return Tk_DeleteBinding(interp, winPtr->mainPtr->bindingTable,
 		    object, sequence);
 	    
 	} else {
+	    /*
+	     * The default case, replace the binding command
+	     */
 	    replace = script;
 	}
 
