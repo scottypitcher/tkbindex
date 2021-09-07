@@ -122,19 +122,25 @@ Tk_BindexObjCmd(
 
 	    cmd = Tk_GetBinding(interp, winPtr->mainPtr->bindingTable, object, sequence);
 	    len1 = strlen(cmd);
-	    len2 = strlen(script) - 1;
+	    len2 = strlen(script);
 
 	    /*
 	     * Does the script match the command, either fully, or with a carriage return
 	     * at either or both ends?
 	     * TODO: Is this logic correct? What if we have a partial match on another command portion?
 	     */
-
-	    if ((match = strstr(cmd, script + 1)) != NULL &&
-		    (match == cmd || cmd[match - cmd - 1] == '\n') &&
-			    (match == cmd + len1 - len2 || match[len2] == '\n')) {
-		n1 = match - cmd;
-		n2 = n1 + len2 - 1;
+	    match = cmd;
+	    while ((match = strstr(match, script + 1)) != NULL) {
+		/*
+		 * If the match is enclosed by start/end of string or newlines, then we have
+		 * a valid match.
+		 */
+		if ((match == cmd || cmd[match-cmd] == '\n') && (match == cmd + len1 - len2 || match[len2] == '\n')) {
+		    n1 = match - cmd;
+		    n2 = n1 + len2 - 1;
+		    break;
+		}
+		++match;
 	    }
 	}
 

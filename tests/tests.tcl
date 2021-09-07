@@ -73,7 +73,7 @@ package require tcltest
 
 
 # bindex test code.
-proc moduleTests {{selector "ABCDEFGHI"}} {
+proc moduleTests {{selector "ABCDEFGHIJ"}} {
 
     # Test each bindex subcommand.
     # ---command-name description body result output {options:setup cleanup match-type returncode erroroutput}
@@ -217,6 +217,21 @@ puts "(bindex) Enter %W (2)"} }
 	puts -nonewline [bind $W <Enter>]
 	return $result
 	} 0 {puts "(bindex) Enter %W (1)"
+puts "(bindex) Enter %W (2)"} {} {}}
+
+    # Special cases.
+    # 
+    lappend testlist {"J. bindex" "Replace a binding command that is a partial match for an earlier command." {
+	bind $W <Enter> {}
+	bindex $W <Enter> "+puts \"(bindex) Enter %W (S)\" ; set var val"
+	bindex $W <Enter> "+puts \"(bindex) Enter %W (1)\""
+	bindex $W <Enter> "+puts \"(bindex) Enter %W (S)\""
+	set result [bindex $W <Enter> "-puts \"(bindex) Enter %W (S)\"" "puts \"(bindex) Enter %W (2)\""]
+	puts -nonewline [bind $W <Enter>]
+	return $result
+	} 1 {
+puts "(bindex) Enter %W (S)" ; set var val
+puts "(bindex) Enter %W (1)"
 puts "(bindex) Enter %W (2)"} {} {}}
 
     # Setup the test output.
