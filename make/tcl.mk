@@ -8,7 +8,7 @@
 $(if $(value buildtoplevel_mk_included),,$(error Cannot include tcl.mk directly: buildtoplevel.mk must be included instead.))
 
 # Find the OS dependant private header directory prefix.
-$(if $(call eq,$(BUILD_OS),WINDOWS),$(eval _tcl_tk_os_private=windows),)
+$(if $(call eq,$(BUILD_OS),WINDOWS),$(eval _tcl_tk_os_private=win),)
 $(if $(call eq,$(BUILD_OS),LINUX),$(eval _tcl_tk_os_private=unix),)
 # SVP: Don't know about OSX.
 

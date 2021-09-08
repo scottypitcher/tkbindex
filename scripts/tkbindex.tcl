@@ -32,7 +32,7 @@
 
 package require Tk
 
-package provide @PACKAGE_NAME@ @PACKAGE_VERSION@
+package provide bindex 1.0
 
 # bindex
 # Usage:

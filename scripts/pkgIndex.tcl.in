@@ -1,9 +1,0 @@
-#
-# Tcl package index file
-#
-package ifneeded @PACKAGE_NAME@ @PACKAGE_VERSION@ \
-    [list source "[file join $dir tkbindex.tcl]"]
-
-# [list load [file join $dir @PKG_LIB_FILE@] [string totitle @PACKAGE_NAME@]]
-
-# kate: syntax Tcl/Tk;

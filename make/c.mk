@@ -71,7 +71,7 @@ $(eval elftarget_$(1) = $(addprefix $(LOCALBUILDDIR_$(1))/, $(1)$(DLIBEXTENSION)
 $(eval default_install_dir_$(1)=lib)
 $(elftarget_$(1)): $(OBJFILES_$(1)) $(4) | $(LOCALBUILDDIR_$(1))
 	@echo ---Linking Dynamic Library $(1)---
-	$$(CC) -shared -o $$@ -rdynamic $$(ldflags_$(1))  $$(OBJFILES_$(1)) -Bdynamic $$(libs_$(1)) -Bstatic $$(staticlibs_$(1))
+	$$(CC) -shared -o $$@ -Bdynamic $$(ldflags_$(1))  $$(OBJFILES_$(1)) -Bdynamic $$(libs_$(1)) -Bstatic $$(staticlibs_$(1))
 	$$(OBJDUMP) --syms $$@ > $(elftarget_$(1)).lst
 
 ELFTARGET_$(1)=$(elftarget_$(1))
