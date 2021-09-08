@@ -35,6 +35,7 @@ catch "source ~/.wishrc"
 
 package require Tk
 
+# If bindex is not installed then we look for it in the build/lib directory.
 if {[catch "package require bindex $version" err_msg]} {
     set dir [file join [file dirname [info script]] .. build lib]
     if {![file exists $dir] || ![file isdirectory $dir]} {
@@ -45,32 +46,6 @@ if {[catch "package require bindex $version" err_msg]} {
 }
 
 package require tcltest
-
-
-# puts "Search for the (1) binding = [bindex $W <Enter> "?puts \"(bind) Enter %W (1)\""]"
-# 
-# # Try replacing.
-# bindex $W <Enter> "-puts \"(bind) Enter %W (1)\""  "puts \"(bindex) Enter %W (4)\""
-# puts "Bindings after replacing (1) with (4) = [bind $W <Enter>]"
-# puts "Search for the (1) binding = [bindex $W <Enter> "?puts \"(bind) Enter %W (1)\""]"
-# 
-# # replace the (4) one with (5)
-# bindex $W <Enter> "-puts \"(bindex) Enter %W (4)\""  "puts \"(bindex) Enter %W (5)\""
-# puts "Bindings after replacing (4) with (5) = [bind $W <Enter>]"
-# 
-# # replace the middle (3) one with (6)
-# bindex $W <Enter> "-puts \"(bindex) Enter %W (3)\""  "puts \"(bindex) Enter %W (6)\""
-# puts "Bindings after replacing (3) with (6) = [bind $W <Enter>]"
-# 
-# # Try to add something that's already there.
-# bindex $W <Enter> "*puts \"(bindex) Enter %W (5)\""
-# puts "Bindings after unique adding (5) = [bind $W <Enter>]"
-# bindex $W <Enter> "*puts \"(bindex) Enter %W (7)\""
-# puts "Bindings after unique adding (7) = [bind $W <Enter>]"
-
-
-
-
 
 # bindex test code.
 proc moduleTests {{selector "ABCDEFGHIJ"}} {
@@ -284,4 +259,5 @@ puts "(bindex) Enter %W (2)"} {} {}}
     destroy $T
 }
 
-moduleTests $argv
+set cmd "moduleTests $argv"
+{*}$cmd

@@ -10,7 +10,7 @@ $(if $(value buildtoplevel_mk_included),,$(error Cannot include tcl.mk directly:
 # Find the OS dependant private header directory prefix.
 $(if $(call eq,$(BUILD_OS),WINDOWS),$(eval _tcl_tk_os_private=windows),)
 $(if $(call eq,$(BUILD_OS),LINUX),$(eval _tcl_tk_os_private=unix),)
-# Don't know about OSX.
+# SVP: Don't know about OSX.
 
 # Make a TCL PACKAGE from a binary and scripts.
 # Params

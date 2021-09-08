@@ -1,7 +1,25 @@
-2020-06-05  Scott Pitcher  <scottypitcher@gmail.com>
-	* Added licences.
-
-2020-11-12  Scott Pitcher  <scottypitcher@gmail.com>
-
-	* tkbindex.tcl: Complete bindex command written.
-	* tests/tests.tcl: Test script.
+5e02d51 (HEAD -> master, upstream/master, origin/master, origin/HEAD) SVP 8SEP2021: Passes all tests
+8c86532 SVP 8SEP2021: Query commands '*' working and tests pass
+a925d3e SVP 7SEP2021: Corrected search algorithm.
+bfd1904 SVP 7SEP2021: The c implementation passes the unit tests.
+df1c476 SVP 6SEP2021: Updated README and notes.
+e165be5 SVP 6SEP2021: bindex c implementation
+3b60b15 (my-temporary-work) SVP 5SEP2021: Now builds with the make/* scripts.
+245a25d SVP 5SEP2021: Adding c source to configure.ac
+0d0afa8 SVP 4SEP2021: Added tkbindex.c
+b996d6d (upstream/main) Added .gitattributes
+322e10e Ignore packages folder
+2890d14 (tag: v1.0) Merge branch 'master' of server1:tkbindex
+bf40b57 SVP 5JUN2021: Added licence
+fb52dbe Corrected the install of configure-* scripts
+824e88d Corrected man page.
+ee01d87 Corrected dist Makefile.in options
+1a9bf4f Debugged the bindex extension with the test script
+dd4c253 Autoconf, configure and build correctly now
+1a7f822 SVP 12FEB2021: tkbindex.tcl moved to ...in
+5e33744 SVP 15NOV2020: First working version as package
+f56b770 SVP 15NOV2020: Preparing autoconf.
+2ed3025 SVP 14NOV2020: Edits to configure.ac
+ca5bca3 SVP 14NOV2020: man page.
+e5ba7cd SVP 13NOV2020: Added files from TEA sampleextension and tclconfig
+6aedc8c SVP 12NOV2020: Working bindex plus test script

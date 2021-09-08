@@ -41,10 +41,30 @@ bindex tag sequence *script
 	in  the  window(s) given by tag, then add it to those scripts and return true, else return false.
 
 
-To make type:
 
-    make config
-    make all
+---BUILD INSTRUCTIONS---
+
+1. Configure
+
+    $ make config
+
+2. Build
+
+    $ make all
+
+3. Test
+
+    $ wish tests/tests.tcl		# Runs all tests by default.
+
+    or -
+
+    $ wish tests/tests.tcl ABC	# Runs only tests A, B and C.
+
+    Tests A-J are available. Some are dependant on previous tests.
+
+4. To Debug.
+
+    $ debugging/run_gdb.sh
 
 * Note I changed the build system from autoconf to a set of make scripts. It doesn't install yet and it probably won't detect
 your TCL installation. But the tkbindex package will be left in build/lib after the "make all" step.

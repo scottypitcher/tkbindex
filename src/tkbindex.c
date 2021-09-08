@@ -5,7 +5,6 @@
  *
  * Scott Pitcher 6SEP2021
  * This is a c implementation of the tkbindex extension.
- * Note: Not finished and will not pass the tests.
  */
 
 #include "tkInt.h"
@@ -101,7 +100,6 @@ Tk_BindexObjCmd(
 	const char *script = Tcl_GetString(objv[3]);
 	const char *script2 = NULL;
 	const char *cmd = NULL;
-	char *newcmd = NULL;
 	int n1 = -1, n2 = -1, len1 = 0, len2 = 0;
 
 	if (objc == 5) {
@@ -125,43 +123,21 @@ Tk_BindexObjCmd(
 	    len2 = strlen(script+1);
 
 	    /*
-	     * Does the script match the command, either fully, or with a carriage return
+	     * Look through the command for the script, either fully, or with a carriage return
 	     * at either or both ends?
-	     * TODO: Is this logic correct? What if we have a partial match on another command portion?
 	     */
 	    match = cmd;
-#define DEBUG_SEARCH 0
-#if DEBUG_SEARCH
-	    Tcl_AppendResult(interp, "Cmd: <", cmd, ">", "Script: <", script + 1, ">", NULL);
-	    int i = 0;
-#endif
 	    while ((match = strstr(match, script + 1)) != NULL) {
-#if DEBUG_SEARCH
-		/* DEBUG: report the matching result */
-		Tcl_AppendResult(interp, "Match(", Tcl_GetString(Tcl_NewIntObj(i)), "): <", match, ">", NULL);
-#endif
 		/*
 		 * If the match is enclosed by start/end of string or newlines, then we have
 		 * a valid match.
 		 */
-#if DEBUG_SEARCH
-		Tcl_AppendElement(interp, match == cmd ? "(match == cmd)" : "(---)" );
-		Tcl_AppendElement(interp, match != cmd && cmd[match-cmd-1] == '\n' ? "(cmd[match-cmd-1] == '\\n')" : "(---)" );
-		Tcl_AppendElement(interp, match == cmd + len1 - len2 ? "(match == cmd + len1 - len2)" : "(---)" );
-		Tcl_AppendElement(interp, match != cmd + len1 - len2 && match[len2] == '\n' ? "(match[len2] == '\\n')" : "(---)" );
-#endif
 		if ((match == cmd || cmd[match-cmd-1] == '\n') && (match == cmd + len1 - len2 || match[len2] == '\n')) {
 		    n1 = match - cmd;
 		    n2 = n1 + len2 - 1;
-#if DEBUG_SEARCH
-		    Tcl_AppendElement(interp, "Matched!");
-#endif
 		    break;
 		}
 		++match;
-#if DEBUG_SEARCH
-		++i;
-#endif
 	    }
 	}
 
@@ -180,7 +156,6 @@ Tk_BindexObjCmd(
 	     * Query if a command is in the binding commands.
 	     */
 	    Tcl_AppendElement(interp, (n1 > -1 && n2 > -1) ? "1" : "0");
-// 	    Tcl_SetObjResult(interp, Tcl_NewBooleanObj(n1 > -1 && n2 > -1));
 
 	} else if (script[0] == '-') {
 	    /*
@@ -192,17 +167,24 @@ Tk_BindexObjCmd(
 		 * We cut the script out of the bind command.
 		 */
 
-		newcmd = Tcl_Alloc(len1+1);
-		/* Copy the first portion of cmd up to the character before the '\n' + script, then NUL terminate. */
+		char *newcmd = Tcl_Alloc(len1+1);
+
+		/* 
+		 * Copy the first portion of cmd up to the character before the '\n' + script, then NUL terminate.
+		 */
 		newcmd[0] = '\0';
 		if (n1 > 0) {
 		    strncpy(newcmd,cmd,n1-1);
 		    /* Remove trailing '\n' */
 		    newcmd[n1-1] = '\0';
 		}
-		/* Append the trailing portion, and if there was a first portion, include the leading '\n' */
+
+		/*
+		 * Append the trailing portion, and if there was a first portion, include the leading '\n'
+		 */
 		if (n2 < len1 - 1)
 		    strcat(newcmd,cmd+n2+1+(n1 > 0 ? 0 : 1));
+
 		if (newcmd[0] == '\0') {
 		    if ((result = Tk_DeleteBinding(interp, winPtr->mainPtr->bindingTable, object, sequence)) != TCL_OK)
 			return result;
@@ -212,12 +194,16 @@ Tk_BindexObjCmd(
 		}
 		Tcl_Free(newcmd);
 		
-		/* We only add the replacement command, if we found and removed the first one. */
+		/*
+		 * We only add the replacement command, if we found and removed the first one.
+		 */
 		append = script2;
+		Tcl_AppendElement(interp, "1");
+
+	    } else {
+		Tcl_AppendElement(interp, "0");
 	    }
 
-// 	    Tcl_SetObjResult(interp, Tcl_NewBooleanObj(n1 > -1 && n2 > -1));
-	    Tcl_AppendElement(interp, (n1 > -1 && n2 > -1) ? "1" : "0");
 
 	} else if (script[0] == '*') {
 	    /*
@@ -225,10 +211,8 @@ Tk_BindexObjCmd(
 	     */
 	    if (n1 > -1 && n2 > -1) {
 		Tcl_AppendElement(interp, "0");
-// 		Tcl_SetObjResult(interp, Tcl_NewBooleanObj(0));
 	    } else {
 		Tcl_AppendElement(interp, "1");
-// 		Tcl_SetObjResult(interp, Tcl_NewBooleanObj(1));
 		append = script+1;
 	    }
 
